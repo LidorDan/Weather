@@ -10,7 +10,9 @@ function Home() {
     <div className="">
       <Header />
       <h1>Welcome to the Weather App</h1>
+      {/* <input type="text" /> */}
       <Location />
+      {/* <Weather /> */}
     </div>
   );
 }

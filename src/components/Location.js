@@ -1,64 +1,67 @@
 import React, { useEffect, useState } from "react";
 import Weather from "./Weather";
-
 const Location = () => {
-  const DefaultLat = 32.0853; // default latitude of Tel Aviv
-  const DefaultLng = 34.7818; // default longitude of Tel Aviv
-  const [latitude, setLatitude] = useState(DefaultLat);
-  const [longitude, setLongitude] = useState(DefaultLng);
-  const [locationKey, setLocationKey] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const defaultLat = 32.0853; // Default latitude of Tel Aviv
+  const defaultLng = 34.7818; // Default longitude of Tel Aviv
+  const [lat, setLat] = useState(null);
+  const [long, setLong] = useState(null);
+  const [data, setData] = useState([]);
   const apiKey = process.env.REACT_APP_API_KEY;
+  const [locationKey, setLocationKey] = useState(null);
+
+  const getLocation = async () => {
+    try {
+      const response = await fetch(
+        `http://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey=${apiKey}&q=${lat},${long}`
+      );
+      const result = await response.json();
+      setLocationKey(result.Key);
+      setData(result);
+      console.log(result);
+      console.log("key:", result.Key);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
-    const getLocation = () => {
-      // Request to Geoposition Search API to get a location key
-      fetch(
-        `http://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey=${apiKey}&q=${latitude},${longitude}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          setLocationKey(data.Key);
-          setLoading(false);
-          console.log("location key is:", locationKey);
-        })
-        .catch((error) => {
-          setError("Error fetching location data");
-          setLoading(false);
-        });
+    const fetchData = async () => {
+      if (lat !== null && long !== null) {
+        getLocation();
+      }
     };
+    fetchData();
+  }, [lat, long, apiKey]);
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLatitude(position.coords.latitude);
-          setLongitude(position.coords.longitude);
-        },
-        (error) => {
-          setError(error.message);
-        }
-      );
-    } else {
-      setError("Geolocation is not supported by this browser");
-    }
-
-    // When lat&lon are initialized, call the getLocation function to get a location key
-    if (latitude != null && longitude != null) {
-      getLocation();
-    }
-  }, [latitude, longitude, locationKey]);
+  useEffect(() => {
+    const askForLocation = async () => {
+      try {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+        setLat(position.coords.latitude);
+        setLong(position.coords.longitude);
+      } catch (error) {
+        console.error("Error getting geolocation:", error);
+        setLat(defaultLat);
+        setLong(defaultLng);
+      }
+    };
+    askForLocation();
+  });
 
   return (
-    <div>
-      {loading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p>Error: {error}</p>
-      ) : (
-        <Weather locationKey={locationKey} />
-      )}
-    </div>
+
+  <div className="App">
+    {typeof data.main != "undefined" && data.main != null ? (
+      <Weather weatherData={data} />
+    ) : (
+      <div>
+        <h3>{data.Key}</h3>
+        {<Weather locationKey={locationKey} />}
+      </div>
+    )}
+  </div>
   );
 };
 export default Location;
