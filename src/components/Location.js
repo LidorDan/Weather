@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import Weather from "./Weather";
 const Location = () => {
   const defaultLat = 32.0853; // Default latitude of Tel Aviv
-  const defaultLng = 34.7818; // Default longitude of Tel Aviv
+  const defaultLng = 34.781769; // Default longitude of Tel Aviv
   const [lat, setLat] = useState(null);
   const [long, setLong] = useState(null);
   const [data, setData] = useState([]);
   const apiKey = process.env.REACT_APP_API_KEY;
   const [locationKey, setLocationKey] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [cityName, setCityName] = useState("");
 
   const getLocation = async () => {
     try {
@@ -16,11 +18,14 @@ const Location = () => {
       );
       const result = await response.json();
       setLocationKey(result.Key);
+      setLoading(false);
       setData(result);
+      setCityName(result.LocalizedName);
       console.log(result);
       console.log("key:", result.Key);
     } catch (error) {
       console.error("Error fetching data:", error);
+      setLoading(false);
     }
   };
 
@@ -51,17 +56,9 @@ const Location = () => {
   });
 
   return (
-
-  <div className="App">
-    {typeof data.main != "undefined" && data.main != null ? (
-      <Weather weatherData={data} />
-    ) : (
-      <div>
-        <h3>{data.Key}</h3>
-        {<Weather locationKey={locationKey} />}
-      </div>
-    )}
-  </div>
+    <div className="App">
+      {!loading && locationKey && <Weather locationKey={locationKey} cityName={cityName} />}
+    </div>
   );
 };
 export default Location;
