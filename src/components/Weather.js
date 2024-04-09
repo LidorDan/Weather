@@ -115,6 +115,7 @@ const Weather = ({ locationKey, cityName }) => {
     setInputValue(e.target.value);
   };
   const handleCityClick = (city) => {
+    setInputValue("");
     setCityNameSearch(city.LocalizedName);
     weatherData(city.Key);
     getNextDays(city.Key);
@@ -160,20 +161,24 @@ const Weather = ({ locationKey, cityName }) => {
             onChange={handleChange}
             className="search-input"
           />
-          <SearchIcon className="searchIcon" />
+          {/* <SearchIcon className="searchIcon" /> */}
         </div>
-        <List
-          className="citySearchList"
-          // style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
-        >
-          {filteredCities.map((city) => (
-            <ListItem key={city.Key}>
-              <ListItemButton onClick={() => handleCityClick(city)}>
-                <Typography>{city.LocalizedName}</Typography>
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
+        {inputValue && (
+          <div className="autocomplete-list-container">
+            <List
+              className="citySearchList"
+              // style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+            >
+              {filteredCities.map((city) => (
+                <ListItem key={city.Key}>
+                  <ListItemButton onClick={() => handleCityClick(city)}>
+                    <Typography>{city.LocalizedName}</Typography>
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </div>
+        )}
         <div className="tempSwitch">
           <FormControlLabel
             control={
