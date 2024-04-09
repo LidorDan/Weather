@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { AppBar, Toolbar, Typography, Grid, Button } from "@mui/material";
-import { ThemeContext } from "../Theme";
+// import { ThemeContext } from "../Theme";
 
 const Header = () => {
-  const { theme, toggleTheme } = useContext(ThemeContext);
+  // const { theme, toggleTheme } = useContext(ThemeContext);
 
   return (
     <AppBar position="static">
@@ -12,7 +12,7 @@ const Header = () => {
           <Typography variant="h6" component="div">
             Herolo Weather Task
           </Typography>
-          <button onClick={() => toggleTheme()}>{theme}</button>
+          {/* <button onClick={() => toggleTheme()}>{theme}</button> */}
         </Grid>
         <Grid container justifyContent="end">
           <Button color="inherit" href="/">

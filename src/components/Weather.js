@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Grid,
-  TextField,
   Button,
   Typography,
   Card,
@@ -10,8 +9,14 @@ import {
   ListItem,
   ListItemText,
   ListItemButton,
+  Switch,
 } from "@mui/material";
 import { RiHeart3Fill } from "react-icons/ri";
+import "../styles/Weather.css";
+import SearchIcon from "@mui/icons-material/Search";
+import WbSunnyIcon from "@mui/icons-material/WbSunny";
+import NightsStayIcon from "@mui/icons-material/NightsStay";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 const Weather = ({ locationKey, cityName }) => {
   const apiKey = process.env.REACT_APP_API_KEY;
@@ -19,12 +24,14 @@ const Weather = ({ locationKey, cityName }) => {
   const [nextDays, setNextDays] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [cities, setCities] = useState([]);
+  const [cityNameSearch, setCityNameSearch] = useState(cityName);
   const filteredCities = cities.filter(
     (city, index) =>
       cities.findIndex((c) => c.LocalizedName === city.LocalizedName) === index
   );
   const [isFavorite, setIsFavorite] = useState(false);
   const [favorites, setFavorites] = useState([]);
+  const [isCelsius, setIsCelsius] = useState(true);
 
   useEffect(() => {
     const storedFavorites = localStorage.getItem("favorites");
@@ -108,16 +115,19 @@ const Weather = ({ locationKey, cityName }) => {
     setInputValue(e.target.value);
   };
   const handleCityClick = (city) => {
+    setCityNameSearch(city.LocalizedName);
     weatherData(city.Key);
     getNextDays(city.Key);
+    setIsFavorite(favorites.some((fav) => fav.id === city.Key));
   };
 
   const addToFavorites = () => {
     const newFavorite = {
       id: locationKey,
-      cityName,
-      temperatureC: currentWeather[0]?.Temperature?.Metric?.Value,
-      temperatureF: currentWeather[0]?.Temperature?.Imperial?.Value,
+      cityNameSearch,
+      temperatureC: parseInt(currentWeather[0]?.Temperature?.Metric?.Value),
+      temperatureF: parseInt(currentWeather[0]?.Temperature?.Imperial?.Value),
+      WeatherText: currentWeather[0]?.WeatherText,
     };
     if (!isFavorite) {
       setFavorites([...favorites, newFavorite]);
@@ -135,73 +145,116 @@ const Weather = ({ locationKey, cityName }) => {
     setIsFavorite(!isFavorite);
   };
 
+  const toggleTemperatureUnit = () => {
+    setIsCelsius(!isCelsius);
+  };
+
   return (
-    <Grid>
-      <Grid>
-        <Grid>
-          <TextField
-            fullWidth
+    <div className="container">
+      <div className="search-container">
+        <div className="search">
+          <input
+            type="search"
+            placeholder="Enter city name"
             value={inputValue}
             onChange={handleChange}
-            label="Enter city name"
-            variant="outlined"
-            margin="normal"
-            placeholder="Enter city name"
+            className="search-input"
           />
-          <List>
-            {filteredCities.map((city) => (
-              <ListItemButton
-                key={city.Key}
-                onClick={() => handleCityClick(city)}
-              >
-                <ListItemText primary={city.LocalizedName} />
+          <SearchIcon className="searchIcon" />
+        </div>
+        <List
+          className="citySearchList"
+          // style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+        >
+          {filteredCities.map((city) => (
+            <ListItem key={city.Key}>
+              <ListItemButton onClick={() => handleCityClick(city)}>
+                <Typography>{city.LocalizedName}</Typography>
               </ListItemButton>
-            ))}
-          </List>
-        </Grid>
-        <Card>
-          <CardContent>
-            <Typography variant="h6">city name:{cityName}</Typography>
-            <Typography variant="h6">Current Weather</Typography>
+            </ListItem>
+          ))}
+        </List>
+        <div className="tempSwitch">
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isCelsius}
+                onChange={toggleTemperatureUnit}
+                className="switch"
+              />
+            }
+            label={
+              <Typography variant="body1">{isCelsius ? "°C" : "°F"}</Typography>
+            }
+          />
+        </div>
+      </div>
+
+      <div className="weather-container">
+        <Grid container flexDirection="row" justifyContent="space-between">
+          <Grid justifyContent="start" flexDirection="column">
+            <Typography variant="h6">{cityNameSearch}</Typography>
             <Typography variant="body1">
-              Temperature: {currentWeather?.Temperature?.Metric?.Value}°C
+              {isCelsius
+                ? `${parseInt(currentWeather[0]?.Temperature?.Metric?.Value)}°C`
+                : `${parseInt(
+                    currentWeather[0]?.Temperature?.Imperial?.Value
+                  )}°F`}
             </Typography>
-            <Typography variant="body1">
-              Weather Condition: {currentWeather?.WeatherText}
-            </Typography>
-            <Button
-              onClick={addToFavorites}
-              startIcon={
-                <RiHeart3Fill color={isFavorite ? "red" : "inherit"} />
-              }
-            >
+          </Grid>
+          <Grid>
+            <Button onClick={addToFavorites}>
+              <RiHeart3Fill color={isFavorite ? "red" : "inherit"} />
               {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
             </Button>
-          </CardContent>
-        </Card>
-      </Grid>
-      <Grid item xs={12}>
-        <Typography variant="h6">Next 5 Days Weather</Typography>
-        {Array.isArray(nextDays) &&
-          nextDays.map((day, index) => (
-            <Card key={index}>
-              <CardContent>
-                <Typography variant="body1">{day.Date}</Typography>
-                <Typography variant="body1">
-                  Temperature: {day[0].Temperature.Minimum.Value}°C -{" "}
-                  {day[0].Temperature.Maximum.Value}°C
-                </Typography>
-                <Typography variant="body1">
-                  Day: {day.Day.IconPhrase}
-                </Typography>
-                <Typography variant="body1">
-                  Night: {day.Night.IconPhrase}
-                </Typography>
-              </CardContent>
-            </Card>
-          ))}
-      </Grid>
-    </Grid>
+          </Grid>
+        </Grid>
+        <Grid className="weather-details">
+          <Typography variant="body10" className="weatherText">
+            {currentWeather[0]?.WeatherText}
+          </Typography>
+        </Grid>
+        <div className="nextDays">
+          <div className="nextDays-cards">
+            {Array.isArray(nextDays.DailyForecasts) &&
+              nextDays.DailyForecasts.map((day, index) => (
+                <Card key={index} className="card">
+                  <CardContent>
+                    <Typography variant="body1">
+                      {new Date(day.Date).toLocaleDateString("en-US", {
+                        weekday: "long",
+                      })}
+                    </Typography>
+                    <Typography variant="body1" className="temperature">
+                      {isCelsius
+                        ? `${Math.round(
+                            ((day.Temperature.Minimum.Value - 32) * 5) / 9
+                          )}°C - ${Math.round(
+                            ((day.Temperature.Maximum.Value - 32) * 5) / 9
+                          )}°C`
+                        : `${parseInt(
+                            day.Temperature.Minimum.Value
+                          )}°F - ${parseInt(day.Temperature.Maximum.Value)}°F`}
+                    </Typography>
+                    <div className="icon-container sunny">
+                      <WbSunnyIcon className="icon" />
+                      <Typography variant="body1">
+                        {day.Day.IconPhrase}
+                      </Typography>
+                    </div>
+                    <div className="icon-container moon">
+                      <NightsStayIcon className="icon" />
+                      <Typography variant="body1">
+                        {day.Night.IconPhrase}
+                      </Typography>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 export default Weather;

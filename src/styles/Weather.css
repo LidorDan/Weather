@@ -1,0 +1,116 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.search-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  padding: 10px;
+  width: 300px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+}
+
+.searchIcon {
+  position: absolute;
+  right: 10px;
+}
+
+/* 
+.citySearchList {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+  max-height: 150px; 
+  overflow-y: auto; 
+}
+
+.citySearchList.open {
+  display: block;
+} */
+.tempSwitch {
+  margin-left: auto;
+}
+.weather-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* 
+.favorites-button {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: 20px;
+} */
+
+.weather-details {
+  margin-top: 60px;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+.weatherText {
+  font-size: 50px;
+  font-weight: 600;
+}
+
+.nextDays {
+  width: 100%;
+}
+
+.nextDays-cards {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.card {
+  width: calc(20% - 10px);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  margin-right: 10px;
+}
+
+.sunny .icon {
+  color: #ffd700;
+}
+
+.moon .icon {
+  color: #4682b4;
+}
+
+/* .tempSwitch {
+  margin-right: 30px;
+} */
+
+.MuiFormControlLabel-label {
+  font-size: 0.875rem;
+}
