@@ -8,7 +8,6 @@ const App = () => {
     <Routes>
       <Route exact path="/" element={<Home />} />
       <Route exact path="/favorite" element={<Favorite />} />
-      <Route path="/:locationKey" element={<Home />} />
     </Routes>
   );
 };
