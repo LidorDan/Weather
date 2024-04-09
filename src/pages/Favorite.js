@@ -22,8 +22,8 @@ const Favorite = () => {
     }
   }, []);
 
-  const handleCityClick = (id) => {
-    navigate("/", { favId: id });
+  const handleCityClick = (locationKey, cityNameSearch) => {
+    navigate("/", { state: { locationKey, cityNameSearch } });
   };
 
   const toggleTemperatureUnit = () => {
@@ -39,6 +39,11 @@ const Favorite = () => {
               checked={isCelsius}
               onChange={toggleTemperatureUnit}
               className="switch"
+              sx={{
+                "& .MuiSwitch-switchBase.Mui-checked": {
+                  color: "#0F2255",
+                },
+              }}
             />
           }
           label={
@@ -50,7 +55,7 @@ const Favorite = () => {
         {favorites.map((fav) => (
           <Card
             key={fav.id}
-            onClick={() => handleCityClick(fav.id)}
+            onClick={() => handleCityClick(fav.id, fav.cityNameSearch)}
             className="card"
           >
             <CardContent>

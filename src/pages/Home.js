@@ -2,21 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 import Header from "../components/Header";
-import Location from "../components/Location";
 import Weather from "../components/Weather";
 
-const Home = (props) => {
+const Home = () => {
   const defaultLat = 32.0853; // Default latitude of Tel Aviv
   const defaultLng = 34.781769; // Default longitude of Tel Aviv
   const [lat, setLat] = useState(null);
   const [long, setLong] = useState(null);
-  const [data, setData] = useState([]);
   const apiKey = process.env.REACT_APP_API_KEY;
   const [locationKey, setLocationKey] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cityName, setCityName] = useState("");
   const location = useLocation();
-  const [favId, setFavId] = useState(null);
 
   const getLocation = async () => {
     try {
@@ -26,10 +23,7 @@ const Home = (props) => {
       const result = await response.json();
       setLocationKey(result.Key);
       setLoading(false);
-      setData(result);
       setCityName(result.LocalizedName);
-      console.log(result);
-      console.log("key:", result.Key);
     } catch (error) {
       console.error("Error fetching data:", error);
       setLoading(false);
@@ -38,8 +32,13 @@ const Home = (props) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (lat !== null && long !== null) {
-        getLocation();
+      if (
+        location.state?.locationKey == null ||
+        location.state?.locationKey == undefined
+      ) {
+        if (lat !== null && long !== null) {
+          getLocation();
+        }
       }
     };
     fetchData();
@@ -62,16 +61,17 @@ const Home = (props) => {
     askForLocation();
   });
   useEffect(() => {
-    const fetchedFavId = location.state?.favId;
-    if (fetchedFavId !== undefined) {
-      setFavId(fetchedFavId);
-      console.log("favID issss", favId);
+    const fetchedLocationKey = location.state?.locationKey;
+    if (fetchedLocationKey) {
+      setLocationKey(fetchedLocationKey);
+      setLoading(false)
+      setCityName(location.state?.cityNameSearch)
     }
   }, [location.state]);
+
   return (
     <div className="App">
       <Header />
-      {/* <h1>hello:{favLocationKey}</h1> */}
       {!loading && locationKey && (
         <Weather locationKey={locationKey} cityName={cityName} />
       )}

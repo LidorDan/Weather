@@ -7,13 +7,11 @@ import {
   CardContent,
   List,
   ListItem,
-  ListItemText,
   ListItemButton,
   Switch,
 } from "@mui/material";
 import { RiHeart3Fill } from "react-icons/ri";
 import "../styles/Weather.css";
-import SearchIcon from "@mui/icons-material/Search";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -32,7 +30,7 @@ const Weather = ({ locationKey, cityName }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [isCelsius, setIsCelsius] = useState(true);
-
+  const [newKeySearch, setNewKeySearch] = useState(locationKey);
   useEffect(() => {
     const storedFavorites = localStorage.getItem("favorites");
     if (storedFavorites) {
@@ -41,8 +39,8 @@ const Weather = ({ locationKey, cityName }) => {
   }, []);
 
   useEffect(() => {
-    setIsFavorite(favorites.some((fav) => fav.id === locationKey));
-  }, [favorites, locationKey]);
+    setIsFavorite(favorites.some((fav) => fav.id === newKeySearch));
+  }, [favorites, newKeySearch]);
 
   const weatherData = async (locationKey) => {
     try {
@@ -51,7 +49,7 @@ const Weather = ({ locationKey, cityName }) => {
       );
       const result = await response.json();
       setCurrentWeather(result);
-      console.log("current data is:", result);
+      console.log(result);
       const storedFavorites =
         JSON.parse(localStorage.getItem("favorites")) || [];
       const updatedFavorites = storedFavorites.map((fav) => {
@@ -77,15 +75,14 @@ const Weather = ({ locationKey, cityName }) => {
       .then((Response) => Response.json())
       .then((data) => {
         setNextDays(data);
-        console.log("next data :", data);
       })
       .catch((err) => console.log(err));
   };
 
   useEffect(() => {
-    weatherData(locationKey);
-    getNextDays(locationKey);
-  }, [locationKey]);
+    weatherData(newKeySearch);
+    getNextDays(newKeySearch);
+  }, [newKeySearch]);
 
   useEffect(() => {
     const fetchCities = async () => {
@@ -119,12 +116,13 @@ const Weather = ({ locationKey, cityName }) => {
     setCityNameSearch(city.LocalizedName);
     weatherData(city.Key);
     getNextDays(city.Key);
+    setNewKeySearch(city.Key);
     setIsFavorite(favorites.some((fav) => fav.id === city.Key));
   };
 
   const addToFavorites = () => {
     const newFavorite = {
-      id: locationKey,
+      id: newKeySearch,
       cityNameSearch,
       temperatureC: parseInt(currentWeather[0]?.Temperature?.Metric?.Value),
       temperatureF: parseInt(currentWeather[0]?.Temperature?.Imperial?.Value),
@@ -138,7 +136,7 @@ const Weather = ({ locationKey, cityName }) => {
       );
     } else {
       const updatedFavorites = favorites.filter(
-        (fav) => fav.id !== locationKey
+        (fav) => fav.id !== newKeySearch
       );
       setFavorites(updatedFavorites);
       localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
@@ -161,14 +159,10 @@ const Weather = ({ locationKey, cityName }) => {
             onChange={handleChange}
             className="search-input"
           />
-          {/* <SearchIcon className="searchIcon" /> */}
         </div>
         {inputValue && (
           <div className="autocomplete-list-container">
-            <List
-              className="citySearchList"
-              // style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
-            >
+            <List className="citySearchList">
               {filteredCities.map((city) => (
                 <ListItem key={city.Key}>
                   <ListItemButton onClick={() => handleCityClick(city)}>
@@ -186,6 +180,11 @@ const Weather = ({ locationKey, cityName }) => {
                 checked={isCelsius}
                 onChange={toggleTemperatureUnit}
                 className="switch"
+                sx={{
+                  "& .MuiSwitch-switchBase.Mui-checked": {
+                    color: "#0F2255",
+                  },
+                }}
               />
             }
             label={
@@ -208,8 +207,21 @@ const Weather = ({ locationKey, cityName }) => {
             </Typography>
           </Grid>
           <Grid>
-            <Button onClick={addToFavorites}>
-              <RiHeart3Fill color={isFavorite ? "red" : "inherit"} />
+            <Button
+              variant="contained"
+              onClick={addToFavorites}
+              sx={{
+                backgroundColor: "#0F2255",
+                color: "white",
+                "&:active": {
+                  backgroundColor: "#0F2255",
+                },
+              }}
+            >
+              <RiHeart3Fill
+                color={isFavorite ? "red" : "inherit"}
+                style={{ fontSize: "21px", marginRight: "8px" }}
+              />
               {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
             </Button>
           </Grid>

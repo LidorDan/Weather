@@ -1,25 +1,21 @@
-import React, { useContext } from "react";
+import React from "react";
 import { AppBar, Toolbar, Typography, Grid, Button } from "@mui/material";
-// import { ThemeContext } from "../Theme";
 
 const Header = () => {
-  // const { theme, toggleTheme } = useContext(ThemeContext);
-
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: "#0F2255" }}>
       <Toolbar>
         <Grid container justifyContent="start">
           <Typography variant="h6" component="div">
             Herolo Weather Task
           </Typography>
-          {/* <button onClick={() => toggleTheme()}>{theme}</button> */}
         </Grid>
         <Grid container justifyContent="end">
           <Button color="inherit" href="/">
             Home Page
           </Button>
           <Button color="inherit" href="favorite">
-            fav page
+            favorite page
           </Button>
         </Grid>
       </Toolbar>
