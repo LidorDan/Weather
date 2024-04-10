@@ -17,7 +17,7 @@ import NightsStayIcon from "@mui/icons-material/NightsStay";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 const Weather = ({ locationKey, cityName }) => {
-  const apiKey = process.env.REACT_APP_API_KEY;
+  // const apiKey = process.env.REACT_APP_API_KEY;
   const [currentWeather, setCurrentWeather] = useState([]);
   const [nextDays, setNextDays] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -45,7 +45,7 @@ const Weather = ({ locationKey, cityName }) => {
   const weatherData = async (locationKey) => {
     try {
       const response = await fetch(
-        `http://dataservice.accuweather.com/currentconditions/v1/${locationKey}?apikey=${apiKey}`
+        `http://dataservice.accuweather.com/currentconditions/v1/${locationKey}?apikey=${process.env.REACT_APP_API_KEY}`
       );
       const result = await response.json();
       setCurrentWeather(result);
@@ -70,7 +70,7 @@ const Weather = ({ locationKey, cityName }) => {
 
   const getNextDays = (locationKey) => {
     fetch(
-      `http://dataservice.accuweather.com/forecasts/v1/daily/5day/${locationKey}?apikey=${apiKey}`
+      `http://dataservice.accuweather.com/forecasts/v1/daily/5day/${locationKey}?apikey=${process.env.REACT_APP_API_KEY}`
     )
       .then((Response) => Response.json())
       .then((data) => {
@@ -89,7 +89,7 @@ const Weather = ({ locationKey, cityName }) => {
       if (inputValue.trim() !== "") {
         try {
           const response = await fetch(
-            `https://dataservice.accuweather.com/locations/v1/cities/autocomplete?apikey=${apiKey}&q=${inputValue}`
+            `https://dataservice.accuweather.com/locations/v1/cities/autocomplete?apikey=${process.env.REACT_APP_API_KEY}&q=${inputValue}`
           );
           if (response.ok) {
             const data = await response.json();

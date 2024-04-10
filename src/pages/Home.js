@@ -9,7 +9,7 @@ const Home = () => {
   const defaultLng = 34.781769; // Default longitude of Tel Aviv
   const [lat, setLat] = useState(null);
   const [long, setLong] = useState(null);
-  const apiKey = process.env.REACT_APP_API_KEY;
+  // const apiKey = process.env.REACT_APP_API_KEY;
   const [locationKey, setLocationKey] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cityName, setCityName] = useState("");
@@ -18,7 +18,7 @@ const Home = () => {
   const getLocation = async () => {
     try {
       const response = await fetch(
-        `http://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey=${apiKey}&q=${lat},${long}`
+        `http://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey=${process.env.REACT_APP_API_KEY}&q=${lat},${long}`
       );
       const result = await response.json();
       setLocationKey(result.Key);
@@ -42,7 +42,7 @@ const Home = () => {
       }
     };
     fetchData();
-  }, [lat, long, apiKey]);
+  }, [lat, long, process.env.REACT_APP_API_KEY]);
 
   useEffect(() => {
     const askForLocation = async () => {
@@ -64,8 +64,8 @@ const Home = () => {
     const fetchedLocationKey = location.state?.locationKey;
     if (fetchedLocationKey) {
       setLocationKey(fetchedLocationKey);
-      setLoading(false)
-      setCityName(location.state?.cityNameSearch)
+      setLoading(false);
+      setCityName(location.state?.cityNameSearch);
     }
   }, [location.state]);
 
