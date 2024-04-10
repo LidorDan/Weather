@@ -18,7 +18,7 @@ const Home = () => {
   const getLocation = async () => {
     try {
       const response = await fetch(
-        `http://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey=${process.env.REACT_APP_API_KEY}&q=${lat},${long}`
+        `https://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey=${process.env.REACT_APP_API_KEY}&q=${lat},${long}`
       );
       const result = await response.json();
       setLocationKey(result.Key);

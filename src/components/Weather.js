@@ -45,7 +45,7 @@ const Weather = ({ locationKey, cityName }) => {
   const weatherData = async (locationKey) => {
     try {
       const response = await fetch(
-        `http://dataservice.accuweather.com/currentconditions/v1/${locationKey}?apikey=${process.env.REACT_APP_API_KEY}`
+        `https://dataservice.accuweather.com/currentconditions/v1/${locationKey}?apikey=${process.env.REACT_APP_API_KEY}`
       );
       const result = await response.json();
       setCurrentWeather(result);
@@ -70,7 +70,7 @@ const Weather = ({ locationKey, cityName }) => {
 
   const getNextDays = (locationKey) => {
     fetch(
-      `http://dataservice.accuweather.com/forecasts/v1/daily/5day/${locationKey}?apikey=${process.env.REACT_APP_API_KEY}`
+      `https://dataservice.accuweather.com/forecasts/v1/daily/5day/${locationKey}?apikey=${process.env.REACT_APP_API_KEY}`
     )
       .then((Response) => Response.json())
       .then((data) => {
